@@ -66,6 +66,7 @@ with open("ctrl_rom.bin", "w") as f:
         ]
 
         ctrl_word = "".join(sig_bits)
+        ctrl_word = f"{int(ctrl_word, 2):047b}"
 
         f.write(ctrl_word + "\n")
 
