@@ -5,12 +5,13 @@ module clk_divider #(
 )(
     input wire clk_in,
     input wire enable,
+    input wire hlt,
     output reg clk_out = 0
 );
     reg [$clog2(DIV_COUNT)-1:0] counter = 0;
     
     always @(posedge clk_in) begin
-        if (enable) begin
+        if (enable && !hlt) begin
             if (counter == DIV_COUNT - 1) begin
                 counter <= 0;
                 clk_out <= ~clk_out;

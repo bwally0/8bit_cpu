@@ -1,11 +1,13 @@
 `timescale 1ns / 1ps
 
 module seven_seg_driver(
-    input wire clk,
+    input wire clk, // cpu fast clk
+    input wire slow_clk, // cpu slow clk
     input wire rst,
     input wire [31:0] value,
     output reg [6:0] C,
-    output reg [7:0] AN
+    output reg [7:0] AN,
+    output reg DP
 );
 
     reg [16:0] refresh_count = 0; 
@@ -56,6 +58,8 @@ module seven_seg_driver(
             4'hF: C = 7'b0001110;
             default: C = 7'b1111111;
         endcase
+        
+        DP = ~slow_clk; 
     end
 
 endmodule

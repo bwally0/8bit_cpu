@@ -1,29 +1,52 @@
 `timescale 1ns / 1ps
 
 module memory(
-	input wire clk,
-	input wire rst,
-	input wire load,
-	input wire [7:0] bus,
-	output wire [7:0] out
+    input wire clk,
+    input wire rst,
+
+    input wire [15:0] data_in,   // bus
+    output wire [15:0] out,      // MDR to bus
+
+    // control signals
+    input wire mar_load,         // load MAR from bus
+    input wire mdr_load_bus,     // load MDR fully from bus (16 bits)
+    input wire mdr_load_low,     // load MDR[7:0] from memory[MAR]
+    input wire mdr_load_high,    // load MDR[15:8] from memory[MAR]
+    input wire ram_write         // write MDR.low (or MDR.full) to memory[MAR]
 );
-    
-    reg[3:0] mar;
-    reg[7:0] ram[0:15];
-    
+
+    reg [15:0] mar;
+    reg [15:0] mdr;
+    reg [7:0] ram [0:255];
+
+    assign out = mdr;
+
+    // init memory from file
     initial begin
         $readmemh("program.hex", ram);
     end
-    
-    always @(posedge clk, posedge rst) begin
+
+    always @(posedge clk or posedge rst) begin
         if (rst) begin
-            mar <= 4'b0;
-        end else if (load) begin
-            mar <= bus[3:0];
+            mar <= 16'b0;
+            mdr <= 16'b0;
+        end else begin
+            if (mar_load)
+                mar <= data_in;
+
+            if (mdr_load_bus)
+                mdr <= data_in;
+
+            if (mdr_load_low)
+                mdr[7:0] <= ram[mar];
+
+            if (mdr_load_high)
+                mdr[15:8] <= ram[mar];
+
+            if (ram_write) begin
+                ram[mar]     <= mdr[7:0];
+                ram[mar + 1] <= mdr[15:8];
+            end
         end
     end
-    
-    assign out = ram[mar];
-    
 endmodule
-
