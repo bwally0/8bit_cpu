@@ -17,7 +17,7 @@ module memory(
 
     reg [15:0] mar;
     reg [15:0] mdr;
-    reg [7:0] ram [0:255];
+    (* ram_style = "block" *) reg [7:0] ram [0:65535];
 
     assign out = mdr;
 
@@ -44,8 +44,7 @@ module memory(
                 mdr[15:8] <= ram[mar];
 
             if (ram_write) begin
-                ram[mar]     <= mdr[7:0];
-                ram[mar + 1] <= mdr[15:8];
+                ram[mar]  <= mdr[7:0];
             end
         end
     end

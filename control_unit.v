@@ -69,14 +69,12 @@
     localparam SIG_UNUSED0    = 0;
 
     reg [3:0] stage;
+    reg [7:0] opcode_reg;
     reg [46:0] ctrl_word;
     reg [46:0] ctrl_rom [0:4095];
+    initial $readmemb("ctrl_rom.bin", ctrl_rom);
     
-    initial begin
-        $readmemb("ctrl_rom.bin", ctrl_rom);
-    end
-    
-    always @(posedge clk or posedge rst) begin
+    always @(negedge clk or posedge rst) begin
         if (rst)
             stage <= 0;
         else if (ctrl_word[SIG_END])

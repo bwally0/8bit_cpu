@@ -50,7 +50,7 @@ signals = [
     "UNUSED0",
 ]
 
-wb = openpyxl.load_workbook("control_words_blank.xlsx", data_only=True)
+wb = openpyxl.load_workbook("control_words.xlsx", data_only=True)
 ws = wb.active
 
 with open("ctrl_rom.bin", "w") as f:
